@@ -1,0 +1,152 @@
+@startuml SokobanClassDiagram
+
+'!theme plain
+'top to bottom direction
+skinparam defaultFontName Consolas
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide attributes
+'hide methods
+
+set namespaceSeparator none
+
+package javafx.* {
+    class Application
+    class Stage
+    class Scene {
+        Scene(\n Parent,\n width: double,\n height: double)
+    }
+    class BorderPane
+    class GridPane
+    class StackPane
+
+    Application -[hidden]-> Stage
+    Stage --> "1" Scene
+    Scene -[hidden]- BorderPane
+    BorderPane -[hidden]- GridPane
+    GridPane -[hidden]- StackPane
+}
+
+set namespaceSeparator .
+
+package sokoban {
+    class SokobanApp
+
+    Application <|-- SokobanApp
+}
+
+package sokoban.model {
+    class  Board4Design
+    class  Board4Play
+    abstract class Grid
+    class Grid4Play extends Grid
+    class Grid4Design  extends Grid
+    abstract class Cell
+    class Cell4Design extends Cell
+    class Cell4Play extends Cell
+    abstract class GameObjects
+    class Box extends GameObjects
+    class Goal extends GameObjects
+    class Wall extends GameObjects
+    class Player extends GameObjects
+    class Ground extends GameObjects
+    interface Command
+    class CommandInvoker
+    abstract class MoveCommands
+    enum CellValue {
+        BOX, PLAYER, WALL, GOAL, GROUND
+    }
+    Board4Design ..> Grid4Design : <<create>>
+    Board4Design --> "1" Grid4Design
+    Grid4Design ..> Cell4Design : <<create>>
+    Grid4Design *--> "nxm" Cell4Design
+    Board4Play ..> Grid4Play : <<create>>
+    Board4Play *--> "1" Grid4Play
+    Grid4Play ..> Cell4Play : <<create>>
+    Grid4Play *--> "nxm" Cell4Play
+    CommandInvoker --> MoveCommands : <<use>>
+    MoveCommands --> "1" Board4Play
+
+
+}
+
+package sokoban.viewmodel {
+    class BoardViewModel4Design {
+        BoardViewModel4Design(\n Board4Design)
+    }
+    class BoardViewModel4Play {
+        BoardViewModel4Play(\n Board4Design)
+    }
+    class GridViewModel4Design {
+        GridViewModel4Design(\n Board4Design)
+
+        GridViewModel4Design(\n Board4Design, \n width: int,\n height: int)
+    }
+    class GridViewModel4Play {
+        GridViewModel4Design(\n Board4Play)
+    }
+    class CellViewModel4Design {
+        CellViewModel4Design(\n line: int, \n col: int, \n Board4Design)
+    }
+    class CellViewModel4Play {
+        CellViewModel4Play(\n line: int,\n col: int,\n Board4Play)
+    }
+    BoardViewModel4Design -r-> "1" Board4Design
+    BoardViewModel4Play -r-> "1" Board4Design
+    GridViewModel4Design-r-> "1" Grid4Design
+    GridViewModel4Play-r-> "1" Grid4Play
+    CellViewModel4Design *-r-> "1" Cell4Design
+    CellViewModel4Play *-r-> "1" Cell4Play
+
+
+
+}
+
+package sokoban.view {
+    class BoardView4Design {
+        BoardView4Design(\n Stage,\n BoardViewModel4Design)
+    }
+    class BoardView4Play {
+        BoardView4Play(\n Stage,\n BoardViewModel4Play)
+    }
+
+    class GridView4Design {
+        GridView4Design(\n GridViewModel4Design,\n gridWidth: DoubleBinding ,\n gridHeight: DoubleBinding )
+    }
+    class GridView4Play {
+        GridView4Play(\n GridViewModel4Play,\n gridWidth: DoubleBinding ,\n gridHeight: DoubleBinding )
+    }
+
+    class CellView4Design {
+        CellView4Design(\n CellViewModel4Design,\n cellWidth: DoubleBinding,\n cellHeight: DoubleBinding)
+    }
+    class CellView4Play {
+        CellView4Play(\n CellViewModel4Play,\n cellWidth: DoubleBinding,\n cellHeight: DoubleBinding)
+    }
+
+}
+
+SokobanApp ..> "1" Scene : <<create>>
+SokobanApp-l-> "1" Stage
+Scene --> "1" BoardView4Design
+BorderPane <|-r- BoardView4Design
+GridPane <|-r- GridView4Design
+StackPane <|-r- CellView4Design
+
+SokobanApp ..> Board4Design : <<create>>
+SokobanApp ..> BoardViewModel4Design : <<create>>
+SokobanApp ..> BoardView4Design : <<create>>
+
+BoardView4Design-r-> "1" BoardViewModel4Design
+BoardView4Play-r-> "1" BoardViewModel4Play
+BoardView4Design -r-> BoardViewModel4Design : <<use>>
+BoardView4Play -r-> BoardViewModel4Play : <<use>>
+GridView4Design -r-> GridViewModel4Design : <<use>>
+GridView4Play -r-> GridViewModel4Play : <<use>>
+CellView4Design -r-> CellViewModel4Design : <<use>>
+CellView4Play -r-> CellViewModel4Play : <<use>>
+
+
+
+@enduml

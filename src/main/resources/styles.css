@@ -1,0 +1,8 @@
+
+.header {
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
+.errorStyle{
+-fx-text-fill: red;
+}

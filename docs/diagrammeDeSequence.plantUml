@@ -1,0 +1,36 @@
+@startuml
+actor User
+
+participant CommandInvoker
+participant MoveRightCommand
+participant Board4Play
+participant Grid4Play
+participant Cell4Play
+
+User -> CommandInvoker : executeCommand(MoveRightCommand)
+CommandInvoker -> MoveRightCommand : execute()
+MoveRightCommand -> Board4Play : moveRight()
+Board4Play -> Grid4Play : getCell()
+Board4Play -> Grid4Play : play()
+Grid4Play -> Cell4Play : play()
+MoveRightCommand --> CommandInvoker : return
+CommandInvoker --> User : return
+
+User -> CommandInvoker : undoLastCommand()
+CommandInvoker -> MoveRightCommand : undo()
+MoveRightCommand -> Board4Play : moveLeft()
+Board4Play -> Grid4Play : play()
+Grid4Play -> Cell4Play : play()
+MoveRightCommand --> CommandInvoker : return
+CommandInvoker --> User : return
+
+User -> CommandInvoker : redoLastCommand()
+CommandInvoker -> MoveRightCommand : execute()
+MoveRightCommand -> Board4Play : moveRight()
+Board4Play -> Grid4Play : getCell()
+Board4Play -> Grid4Play : play()
+Grid4Play -> Cell4Play : play()
+MoveRightCommand --> CommandInvoker : return
+CommandInvoker --> User : return
+
+@enduml

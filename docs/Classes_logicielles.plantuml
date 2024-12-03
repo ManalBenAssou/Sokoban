@@ -1,0 +1,115 @@
+@startuml SokobanClassDiagram
+
+'!theme plain
+'top to bottom direction
+skinparam defaultFontName Consolas
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide attributes
+'hide methods
+
+set namespaceSeparator none
+
+package javafx.* {
+    class Application
+    class Stage
+    class Scene {
+        Scene(Parent, width: double, height: double)
+    }
+    class BorderPane
+    class GridPane
+    class StackPane
+
+    Application -[hidden]-> Stage
+    Stage --> "1" Scene
+    Scene -[hidden]- BorderPane
+    BorderPane -[hidden]- GridPane
+    GridPane -[hidden]- StackPane
+}
+
+set namespaceSeparator .
+
+package sokoban {
+    class SokobanApp
+
+    Application <|-- SokobanApp
+}
+
+package sokoban.Model {
+    class Board {
+    }
+
+    class Grid {
+    }
+
+    class Cell {
+    }
+
+    class Box extends Cell
+    class Player extends Cell
+    class Wall extends Cell
+    class Goal extends Cell
+
+    enum CellValue {
+        BOX, PLAYER, WALL, GOAL, GROUND
+    }
+
+    Board--> "1" Grid
+    Grid --> "10x10" Cell
+}
+
+package sokoban.viewmodel {
+    class BoardViewModel {
+        BoardViewModel(Board)
+    }
+
+    class GridViewModel {
+        GridViewModel(Grid)
+    }
+
+    class CellViewModel {
+        CellViewModel(line: int, col: int, Cell)
+    }
+
+    BoardViewModel--> "1" GridViewModel
+    GridViewModel --> "10x10" CellViewModel
+}
+
+package sokoban.View {
+    class BoardView {
+        BoardView(Stage, BoardViewModel)
+    }
+
+    class GridView {
+        GridView(GridViewModel, gridWidth: DoubleProperty)
+    }
+
+    class CellView {
+        CellView(CellViewModel, cellWidth: DoubleProperty)
+    }
+
+    BoardView--> "1" GridView
+    GridView --> "10x10" CellView
+}
+
+SokobanApp ..> "1" Scene : <<create>>
+SokobanApp-l-> "1" Stage
+Scene --> "1" BoardView
+BorderPane <|-r- BoardView
+GridPane <|-r- GridView
+StackPane <|-r- CellView
+
+SokobanApp ..> Board : <<create>>
+SokobanApp ..> BoardViewModel : <<create>>
+SokobanApp ..> BoardView : <<create>>
+
+BoardView-r-> "1" BoardViewModel
+GridView -r-> GridViewModel : <<use>>
+CellView -r-> CellViewModel : <<use>>
+
+BoardViewModel -r-> "1" Board
+GridViewModel-r-> "1" Grid
+CellViewModel *-r-> "1" Cell
+
+@enduml
